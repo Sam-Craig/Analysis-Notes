@@ -1,0 +1,153 @@
+\documentclass[12pt]{article}
+
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\title{UChicago Honors Analysis Quarter 1 2019 Notes}
+\author{Sam Craig\\samcraig@uchicago.edu}
+
+% All theorems are numbered
+\newtheorem{thm}{Theorem}[section] % the main one
+\newtheorem{lemma}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+
+% To give theorems names if I see fit to do so
+\theoremstyle{plain} 
+\newcommand{\thistheoremname}{}
+\newtheorem{genericthm}[thm]{\thistheoremname}
+\newenvironment{namedthm}[1]
+  {\renewcommand{\thistheoremname}{#1}
+   \begin{genericthm}}
+  {\end{genericthm}}
+
+\newtheorem{definition}{Definition}[section]
+\newtheorem{genericdef}[definition]{\thistheoremname}
+\newenvironment{nameddef}[1]
+  {\renewcommand{\thistheoremname}{#1}
+   \begin{genericdef}}
+  {\end{genericdef}}
+
+\newcommand{\R}{\mathbb{R}}
+
+\DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\vdim}{dim}
+
+\renewcommand{\vec}[1]{\mathbf{#1}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\vu}{\mathbf{u}}
+\newcommand{\vw}{\mathbf{w}}
+\newcommand{\vzero}{\mathbf{0}}
+\newcommand{\Lagr}{\mathcal{L}}
+
+
+
+
+\begin{document}
+    \maketitle
+
+    This is a collection of definitions and theorems from the first quarter of Honors Analysis. It is intended to help me, in rewriting them, remember the definitions, theorems, and proofs of the course and to be a reference in the future for what the course covered.
+
+    \section[d1]{10/2 - Linear Algebra}
+
+    \begin{definition}[Vector Space]
+        ~\\A \textbf{vector space} is a set with addition and scalar multiplication defined such that for any $\vv, \vu, \vw \in V$ and $\alpha, \beta \in \R$
+
+        \begin{enumerate}
+            \item $\vv + \vw = \vw + \vv \in V$ (Commutivity)
+            \item $(\vv + \vu) + \vw = \vv + (\vu + \vw)$ (Associativity of Addition)
+            \item There exists an element $\vzero \in V$ such that for all $\vv \in V$, $\vzero + \vv = \vv$ (Identity)
+            \item $\alpha \vv \in V$ (Closed under scalar multiplication)
+            \item $(\alpha \beta) \vv = \alpha (\beta \vv)$ (Associativity of multiplication)
+            \item $(\alpha + \beta) \vv = \alpha \vv + \beta \vv$ and $\alpha (\vv + \vu) = \alpha \vv + \alpha \vu$ (Distributivity)
+        \end{enumerate}
+    \end{definition}
+
+    \begin{definition}[Span]
+        ~\\For a set $B \subset V$, the \textbf{span} of $B$ is defined as $$\spn B = \sum_{\vv \in B} a_{\vv} \vv$$For any $a_{\vv} \in \R$.\\For a finite set $B = \{\vv_1, \vv_2 \dots, \vv_n\}$, span can also be written as
+        $$\spn B = \sum_{i = 1}^n a_i\vv_i$$For any $a_i \in \R$.\\
+        If $\spn B = V$, then we say $B$ spans (or generates) $V$.
+    \end{definition}
+
+    \begin{definition}[Linear Dependence and Independence]
+        ~\\A set $B \subset V$ is \textbf{linearly independent} if $$\sum_{\vv \in B} a_{\vv} \vv = \vzero$$implies that $a_{\vv} = 0$ for all $\vv \in B$. Otherwise, $B$ is \textbf{linearly dependent}.
+    \end{definition}
+
+    \begin{definition}[Basis and Dimensions]
+        ~\\A set $B \subset V$ is a \textbf{basis} of $V$ if it is linearly independent and is a basis of $V$.\\The \textbf{dimension} of $V$ equals the cardinality of $B$. In other words, $$\vdim V = |B|$$If $B$ is finite, we say $V$ is finite dimensional, otherwise we say $V$ is infinite dimensional.
+    \end{definition}
+
+    \begin{thm}[Bases of the same vector space have the same length]
+        ~\\If $V$ is finite dimensional and has bases $A, B$, then $|A| = |B|$.
+    \end{thm}
+
+    \begin{proof}
+        Let $V$ be a finite dimensional vector space with bases $$A = \{\vv_1, \vv_2, \dots, \vv_n\}$$ and $$B = \{\vu_1, \vu_2, \dots, \vu_k\}$$Suppose $k \neq n$, and without loss of generality, let $n > k$. Since $\vu_1 \in \spn A$, $$\vu_1 = \sum_{i = 1}^n \alpha_i \vv_i$$
+        Without loss of generality, let $\alpha_1 \neq 0$. Since $A$ is a basis, so is $\{\alpha_1 \vv_1, \vv_2, \dots, \vv_n\}$ and thus so is $$A_1 = \{\alpha_1 \vv_1 + \sum_{i = 2}^n \alpha_i \vv_i, \vv_2, \dots, \vv_n\} = \{\vu_1, \vv_2, \dots, \vv_n\}$$We can repeat this process with $\vu_2$.$$\vu_2 = \beta \vu_1 + \sum_{i = 2}^n \alpha_i \vv_i$$Suppose $\alpha_i = 0$ for $i = 2, 3 \dots, n$. Then $\vu_2 - \beta \vu_1 =0$, which contradicts linear independence of $\vu_1$ and $\vu_2$. Thus, there exists some $\alpha_i \neq 0$. Without loss of generality, we have $\alpha_2 \neq 0$, so by the same process, let $$A_2 = \{\vu_1, \vu_2, \vv_3, \dots, \vv_n\}$$Repeating this for all other elements of $B$ gives a basis $$A_k = \{\vu_1 \dots \vu_k \vv_{k+1} \dots \vv_n\}$$Since $\vv_{k+1} \in \spn B$, $\vv_{k+1}$, we have $$\vv_{k+1} = \sum_{i = 1}^k \alpha_i \vu_i$$and thus $$\vv_{k+1} - \sum_{i = 1}^k \alpha_i \vu_i = 0$$hence $A_k$ is not linearly independent, which is a contradiction. Thus, $k = n$, so $|A| = |B|$.
+    \end{proof}
+
+    Subsequently, vector spaces will be assumed to be finite dimensional unless otherwise stated.
+
+    \begin{definition}{Subspace of Vector Space}
+        ~\\A \textbf{subspace} of a vector space $V$ is a subset $W \subset V$ such that for all $\vv, \vu \in W$ and $\alpha \in \R$, $\alpha \vv + \vu \in W$
+    \end{definition}
+
+    \begin{thm}{Span of vectors is subspace}
+        Let $V$ be a vector space and $B = \{\vv_1, \dots, \vv_n\} \subset V$. Then $\spn B$ is a subspace of $V$.
+    \end{thm}
+
+    \begin{proof}
+        Let $\vu, \vw \in \spn B$ and $\lambda \in \R$. Then $$\vu = \sum_{i = 1}^n \alpha_i \vv_i$$and$$\vw = \sum_{i = 1}^n \beta_i \vv_i$$so$$\lambda\vu + \vw = \sum_{i = 1}^n (\lambda\alpha_i + \beta_i) \vv_i$$Since $(\lambda\alpha_i + \beta_i) \in \R$ for $i = 1, \dots, n$, $\lambda \vu + \vw \in \spn B$, and thus $B$ is a subspace of $V$.
+    \end{proof}
+
+    \begin{thm}{Basis of subspace is subset of basis of space}
+        ~\\Let $W$ be a subspace of $V$. For any basis $A$ of $W$ with $$A = \{\vu_1, \dots \vu_k\}$$there exists a basis $B$ of $V$ such that $$B = \{\vu_1 \dots \vu_k, \vu_{k+1} \dots \vu_n \}$$
+    \end{thm}
+
+    \begin{proof}
+        Let $A$ be as defined in the theorem. Either $V - \spn A = \emptyset$ or otherwise (where $-$ is defined as set difference). If $V - \spn A = 0$, then $V \subset \spn A$. Since $\spn A \subset V$, it follows that $V = \spn A$ and thus $A$ is a basis of $V$. Otherwise, there exists a $\vu_{k+1} \in V - \spn A$. Define $A_1 = A \cup \vu_{k+1}$. Since $\vu_{k+1} \not\in \spn A$, $A_1$ is linearly independent. Repeat this until $V - \spn A_j = 0$. The $A_j = B$ is linearly independent and spanning and thus is a basis of $V$ with $$B = \{\vu_1 \dots \vu_k, \vu_{k+1} \dots \vu_n \}$$
+    \end{proof}
+
+    \section[d2]{10/4 - Linear Algebra}
+
+    \begin{definition}{Linear Map}
+        ~\\A \textbf{linear map} $T:V \to W$ is a function such that for all $\vv, \vu \in V$ and $\alpha \in \R$, $$T(\alpha \vv + \vu) = \alpha T \vv + T \vu$$
+        The set of all linear maps from $V$ to $W$ is denoted $\Lagr(V, W)$ and the set of all linear maps from $V$ to $V$ is denoted $\Lagr(V)$. Linear maps from $V$ to $V$ are also known as linear operators.
+    \end{definition}
+
+    \begin{thm}{Properties of Linear Maps}
+        Let $T:V \to W$ and $S:W \to Z$ be linear maps. The following all hold:
+        \begin{enumerate}
+            \item $S \circ T:V \to Z$ is a linear map.
+            \item If $T$ is bijective, it has a unique inverse $T^{-1}:W \to V$ such that $TT^{-1} = T^{-1}T = I$.
+            \item $T$ is uniquely determined by its values over its bases.
+            \item $\Lagr(V, W)$ is a vector space.
+        \end{enumerate}
+    \end{thm}
+
+    \begin{enumerate}
+        \item Let $\alpha \in \R$ and $\vv, \vu \in V$. From the properties of linear maps we have:
+        \begin{align}
+            (S \circ T)(\alpha \vv + \vu) &= S(T(\alpha \vv + \vu))\\
+            &= S(\alpha T \vv + T \vu)\\
+            &= \alpha (S \circ T) \vv + (S \circ T) \vu
+        \end{align}
+        \item \begin{proof}
+            By the definition of function addition, all the axioms of vector spaces hold except closure over addition and closure of scalar multiplication. It suffices to show that for any $T, S \in \Lagr(V, W)$ and $\alpha \in \R$, $\alpha T + S \in \Lagr(V,W)$
+            Suppose $\beta \in \R$, and $\vv, \vu \in V$. Then 
+            \begin{align}
+                (\alpha T + S)(\beta \vv + \vu) &= \alpha T(\beta \vv + \vu) + S(\beta \vv + \vu)\\
+                &= \alpha \beta T(\vv) + \alpha T(\vu) + \beta S(\vv) + S(\vu)\\
+                &= \beta (\alpha T + S)(\vv) + (\alpha T + S)(\vu)
+            \end{align}
+            Thus $\alpha T + S$ is a linear map, so $\Lagr(V,W)$ is a vector space.
+        \end{proof}
+    \end{enumerate}
+    
+
+    \begin{thm}{}
+        Let
+    \end{thm}
+
+    \section[d3]{10/7 - Linear Algebra}
+\end{document}

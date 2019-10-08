@@ -1,0 +1,1 @@
+This is a collection of definitions and theorems from the first quarter of Honors Analysis. It is intended to help me, in rewriting them, remember the definitions, theorems, and proofs of the course and to be a reference in the future for what the course covered.
