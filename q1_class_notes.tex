@@ -12,6 +12,9 @@
 \newtheorem{lemma}[thm]{Lemma}
 \newtheorem{prop}[thm]{Proposition}
 
+\usepackage{etoolbox}
+\AtBeginEnvironment{align}{\setcounter{equation}{0}}
+
 % To give theorems names if I see fit to do so
 \theoremstyle{plain} 
 \newcommand{\thistheoremname}{}
@@ -29,14 +32,20 @@
   {\end{genericdef}}
 
 \newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
 
 \DeclareMathOperator{\spn}{span}
+\DeclareMathOperator{\nul}{null}
+\DeclareMathOperator{\rank}{rank}
+%ker already defined
+\DeclareMathOperator{\im}{Im}
 \DeclareMathOperator{\vdim}{dim}
 
 \renewcommand{\vec}[1]{\mathbf{#1}}
 \newcommand{\vv}{\mathbf{v}}
 \newcommand{\vu}{\mathbf{u}}
 \newcommand{\vw}{\mathbf{w}}
+\newcommand{\vx}{\mathbf{x}}
 \newcommand{\vzero}{\mathbf{0}}
 \newcommand{\Lagr}{\mathcal{L}}
 
@@ -116,7 +125,7 @@
     \end{definition}
 
     \begin{thm}{Properties of Linear Maps}
-        Let $T:V \to W$ and $S:W \to Z$ be linear maps. The following all hold:
+        ~\\Let $T:V \to W$ and $S:W \to Z$ be linear maps. The following all hold:
         \begin{enumerate}
             \item $S \circ T:V \to Z$ is a linear map.
             \item If $T$ is bijective, it has a unique inverse $T^{-1}:W \to V$ such that $TT^{-1} = T^{-1}T = I$.
@@ -126,12 +135,37 @@
     \end{thm}
 
     \begin{enumerate}
-        \item Let $\alpha \in \R$ and $\vv, \vu \in V$. From the properties of linear maps we have:
-        \begin{align}
-            (S \circ T)(\alpha \vv + \vu) &= S(T(\alpha \vv + \vu))\\
-            &= S(\alpha T \vv + T \vu)\\
-            &= \alpha (S \circ T) \vv + (S \circ T) \vu
-        \end{align}
+        \item 
+        \begin{proof}
+            Let $\alpha \in \R$ and $\vv, \vu \in V$. From the properties of linear maps we have:
+            \begin{align}
+                (S \circ T)(\alpha \vv + \vu) &= S(T(\alpha \vv + \vu))\\
+                &= S(\alpha T \vv + T \vu)\\
+                &= \alpha (S \circ T) \vv + (S \circ T) \vu
+            \end{align}
+            Thus $S \circ T$ is a linear map.
+        \end{proof}
+        \item \begin{proof}
+            First we will prove a linear inverse exists. Bijective functions have inverses, so if $T$ is bijective, then it has an inverse $T^{-1}$. Let $\alpha \in \R$ and $\vv, \vu \in V$. 
+            \begin{align}
+                T(\alpha T^{-1} \vu + T^{-1} \vv) &= \alpha TT^{-1} \vu + TT^{-1} \vv \\
+                &= \alpha \vu + \vv\\
+                &= TT^{-1}(\alpha \vu + \vv)
+            \end{align}
+            Thus, we have $ T(\alpha T^{-1} \vu + T^{-1} \vv) = TT^{-1}(\alpha \vu + \vv)$, which implies $T^{-1}T(\alpha T^{-1} \vu + T^{-1} \vv) = T^{-1}TT^{-1}(\alpha \vu + \vv)$, which in turn implies $\alpha T^{-1} \vu + T^{-1} \vv = T^{-1}(\alpha \vu + \vv)$. Thus, $T^{-1}$ is a linear map. \\
+            To prove uniqueness, suppose $L, G$ are inverses of $T$. Then $TL = I = TG$, so $LTL = LTG$, and since $LT = I$, we have $L = G$. Thus, inverses are unique.
+        \end{proof}
+        \item \begin{proof}
+            Let $\{vv_1, \dots, \vv_n\}$ be a basis of $V$. Suppose $S, T: V \to W$ are such that $S\vv_1 = T\vv_1, \dots, S\vv_n = T\vv_n$. Let $\vv \in V$, then $$\vv = \sum_{i = 1}^n \alpha_i \vv_i$$so 
+            \begin{align*}
+                S\vv &= S\sum_{i = 1}^n \alpha_i \vv_i \\
+                &= \sum_{i = 1}^n \alpha_i S \vv_i \\
+                &= \sum_{i = 1}^n \alpha_i T \vv_i \\
+                &= T\sum_{i = 1}^n \alpha_i \vv_i\\
+                &= T\vv
+            \end{align*}
+            Thus for all $\vv \in V$, $S\vv = T\vv$, so $S = T$. Hence, linear maps are uniquely determined by the image of a basis of the domain.
+        \end{proof}
         \item \begin{proof}
             By the definition of function addition, all the axioms of vector spaces hold except closure over addition and closure of scalar multiplication. It suffices to show that for any $T, S \in \Lagr(V, W)$ and $\alpha \in \R$, $\alpha T + S \in \Lagr(V,W)$
             Suppose $\beta \in \R$, and $\vv, \vu \in V$. Then 
@@ -145,9 +179,248 @@
     \end{enumerate}
     
 
-    \begin{thm}{}
-        Let
+    \begin{thm}{$\dim \Lagr(V,W) = \dim V \dim W$}
+        ~\\For finite dimensional vector spaces $V, W$, $\dim \Lagr(V,W) = \dim V \dim W$.
+    \end{thm}
+    \begin{proof}
+        Let $\{\vv_1, \dots, \vv_n\}$ be a basis of $V$ and $\{\vw_1, \dots, \vw_k\}$ be a basis of $W$. Let $T \in \Lagr(V, W)$. Define
+        \[ T_{ij}(\vv_k) =
+        \begin{cases} 
+            \vw_j & k = i \\
+            0 & \text{otherwise}
+        \end{cases}
+        \]
+
+        For any linear map $S \in \Lagr(V,W)$, $S$ is uniquely determined by its values over $\{\vv_1, \dots, \vv_n\}$. 
+        $$S(\vv_i) = \sum_{j=1}^k \alpha_j \vw_j = \sum_{j=1}^k \alpha_{ij} T_{ij}(\vv_i)$$Thus $$S(\vv) = \sum_{j=1}^k \sum_{i=1}^n \alpha_{ij} T_{ij}(\vv)$$Thus $\{T_{ij}: i \le n, j \le k\}$ is a basis of $\Lagr(V,W)$ which clearly has dimension $kn$, so $\dim \Lagr(V,W) = \dim V \dim W$.
+    \end{proof}
+
+    \begin{definition}{Kernel and Image of a Linear Map}
+        ~\\The \textbf{kernel} of a linear map $T:V \to W$ is the set $\ker T = \{\vv \in V : T\vv = 0\}$. The \textbf{image} of a linear map is the set $\im T = \{T\vv \in W : \vv \in V\}$.
+    \end{definition}
+
+    \begin{thm}{Kernel and Image are subspaces}
+        ~\\Let $T:V \to W$ be a linear map. Then:
+        \begin{enumerate}
+            \item $\ker T$ is a subspace of $V$.
+            \item $\im T$ is a subspace of $W$.
+        \end{enumerate}
+    \end{thm}
+    
+    \begin{enumerate}
+        \item \begin{proof}
+            Let $\vv, \vw \in \ker T$ and $\alpha \in \R$. Then 
+                $$T(\alpha \vv + \vw) = \alpha T(\vv) + T(\vw) = 0$$
+            Thus, $\alpha \vv + \vw \in \ker T$, so $\ker T$ is a subspace of $V$.
+        \end{proof}
+
+        \item \begin{proof}
+            Let $\vv, \vw \in \im T$ and $\alpha \in \R$. Define $\vv', \vw' \in V$ such that $T\vv' = \vv$ and $T\vw' = \vw$. Then 
+                $$T\alpha \vv' + \vw' = \alpha T\vv' = t\vw' = \alpha \vv + \vw$$
+            Thus $\alpha \vv + \vw \in \im T$, so $\im T$ is a subspace
+        \end{proof}
+    \end{enumerate}
+
+    \begin{definition}{Nullity and Rank of a Linear Map}
+        ~\\The \textbf{nullity} of a linear map is the dimension of the kernal: $\nul T = \dim \ker T$. The \textbf{rank} of a linear map is the dimension of the image: $\rank T = \dim \im T$.
+    \end{definition}
+
+    \begin{definition}{Surjectivity, Injectivity, and Bijectivity}
+        ~\\A linear transformation $T:V \to W$ is \textbf{surjective} if for every $\vw \in W$ there exists a $\vv \in V$ such that $T\vv = \vw$. 
+
+        A linear transformation $T:V \to W$ is \textbf{injective} if for every $\vw, \vv \in V$, if $T\vv = T\vw$ then $\vv = \vw$. 
+
+        A linear transformation $T:V \to W$ is \textbf{bijective} if it is surjective and injective. In otherwords, for an $\vw \in W$ there exists a unique $\vv \in V$ such that $T\vv = \vw$.
+    \end{definition}
+
+    \begin{thm}{Surjective, Injective, and Bijective Linear Maps}
+        ~\\Let $T:V \to W$ be a linear map and $B \subset V$. 
+        \begin{enumerate}
+            \item If $B$ spans $V$ and $T$ is surjective, then $TB = \{Tb : b \in B\}$ spans $W$.
+            \item If $B$ is linearly independent and $T$ is injective, then $TB$ is linear independent in $W$.
+            \item If $B$ is a basis of $V$ and $T$ is bijective, then $TB$ is a basis of $W$.
+        \end{enumerate}
     \end{thm}
 
+    \begin{enumerate}
+        \item \begin{proof}
+            Suppose $B = \{\vu_1, \dots, \vu_n\}$ spans $V$ and $T$ is surjective. Fix $\vw \in W$. Then there exists $\vv \in V$ such that $T\vv = \vw$. Since $B$ spans $V$, $$\vv = \sum_{i = 1} \alpha_i \vu_i$$it follows that $$\vw = T\vv = \sum_{i = 1} \alpha_i T\vu_i$$Thus any element of $W$ is a linear combination of $TB$, so $TB$ spans $W$.
+        \end{proof}
+        \item \begin{proof}
+            Suppose $B = \{\vu_1, \dots, \vu_n\}$ is linearly independent in $V$, $T$ is injective, and $TB$ is linearly dependent. Then there exists $\alpha_1, \dots, \alpha_n \neq 0\in \R$ such that $$\sum_{i = 1}^n \alpha_i T\vu_i = \vzero$$Then $$T\sum_{i = 1}^n \alpha_i \vu_i = 0$$but since $B$ is linearly independent, $$\sum_{i = 1}^n \alpha_i \vu_i = \vu \neq 0$$Thus, $T\vu = T\vzero = \vzero$ but $\vu \neq \vzero$, so $T$ is not injective. A contradiction is reached, so if $B$ is linearly independent and $T$ is injective, $TB$ is linearly independent.
+        \end{proof}
+        \item \begin{proof}
+            Suppose $B$ is a basis and $T$ is bijective. Then since $B$ is spanning and $T$ is surjective, $TB$ is spanning. Since $B$ is linearly independent and $T$ is injective, $TB$ is linearly independent. Then $TB$ is a basis. 
+        \end{proof}
+    \end{enumerate}
+
+    \begin{thm}[Injective maps map $\vzero$ to $\vzero$]
+        A linear map $T:V \to W$ is injective if and only if $\ker T = \{\vzero\}$.
+    \end{thm}
+
+    \begin{proof}
+        Suppose $T:V \to W$ is injective. $T\vzero = \vzero$, so if $T\vv = \vzero$, then since $T$ is injective $\vv = \vzero$. Hence $\ker T = \{\vzero\}$.
+
+        Suppose $\ker T = \{\vzero\}$, $\vv, \vw \in V$, and $T\vv = T\vw$. Then $T\vv - \vw = 0$, so $\vv - \vw = 0$ and thus $\vv = \vw$. Hence $T$ is injective.
+    \end{proof}
+
+    \begin{definition}{Isomorphism, Isomorphic Vector Space}
+        ~\\An \textbf{isomorphism} is a bijective linear map $T:V \to W$. Two vector spaces $V,W$ are \textbf{isomorphic} if there exists an isomorphism between them. 
+    \end{definition}
+
+    \begin{thm}{Isomorphic Vector Spaces have the same dimension}
+        ~\\$V,W$ are isomorphic if and only if they have the same dimension.
+    \end{thm}
+
+    \begin{proof}
+        Suppose $V, W$ are isomorphic. Then there exists a bijective linear map $T:V \to W$. For a basis $B$ of $V$ with length $n$, $TB$ is a basis of $W$ with length $n$. Thus, $V$ and $W$ have the same dimension.
+
+        Suppose $V, W$ have the same dimension. Let $A = \{\vv_1, \dots, \vv_n\}$ be a basis of $V$ and $B = \{\vw_1, \dots, \vw_n\}$ be a basis of $W$. Define $T\vv_i = \vw_i$. Fix $\vw \in W$. Then $$\vw = \sum_{i = 1}^n \alpha_i \vw_i = \sum_{i = 1}^n \alpha_i T\vv_i = T\sum_{i = 1}^n \alpha_i \vv_i$$The last sum is an element $\vv \in V$, so $T$ is surjective. Let $\vv \in \ker T$ and suppose $\vv \neq \vzero$. Then $$\vv = \sum_{i = 1}^n \alpha_i \vv_i$$so $$T\vv = T\sum_{i = 1}^n \alpha_i \vv_i = \sum_{i = 1}^n \alpha_i T\vv_i = \sum_{i = 1}^n \alpha_i \vw_i$$Since $T\vv = 0$, we have $$\sum_{i = 1}^n \alpha_i \vw_i$$This contradicts the linear independence of $B$. Thus $\ker T = \{\vzero\}$, so $T$ is injective. Since $T$ is injective and surjective, it is bijective.
+    \end{proof}
+
+    \begin{thm}{Rank + Nullity Theorem}
+        ~\\For a linear transform $T:V \to W$, $\nul T + \rank T = \dim V$.
+    \end{thm}
+
+    \begin{proof}
+        Let $\{\vv_1, \dots, \vv_p\}$ be a basis of $\ker T$. Extend that with $\{\vv_{p+1}, \dots, \vv_{n}\}$ to a basis of $V$ and define $\ker T^* = \spn \{\vv_{p+1}, \dots, \vv_{n}\}$. We will prove the restriction of $T$, $S:\ker T^* \to \im T$ is bijective. First, suppose $\vv \in \ker T^*$. Then $\vv \in V$, so $S\vv \in \im T$, so $S$ is well-defined. Suppose for some $\vv \in \ker T^*$ $T\vv = 0$. Then $\vv \in \ker T^* \cap \ker T$. Then $$\vv = \sum_{i = 1}^p \alpha_i \vv_i = \sum_{i = p+1}^n \alpha_i \vv_i$$so$$\sum_{i = 1}^p \alpha_i \vv_i - \sum_{i = p+1}^n \alpha_i \vv_i = 0$$Since $\{\vv_1, \dots, \vv_n\}$ is a basis, it is linearly independent, so $\alpha_i = 0$ for $i = 1, \dots, n$. Thus $\vv = 0$, so $S$ is injective. Suppose $\vw \in \im T$. Then there exists $$\vv = \sum_{i = 1}^p \alpha_i \vv_i + \sum_{i = p+1}^n \alpha_i \vv_i$$such that $T\vv = \vw$. Let$$\vu = \sum_{i = p+1}^n \alpha_i \vv_i \in \ker T^*$$Then $$T\vv = T\sum_{i = 1}^p \alpha_i \vv_i + T\vu = T\vu = \vw$$so there exists a $\vu \in \ker T^*$ such that $T \vu = \vw$. Hence $T$ is surjective and thus is bijective.
+
+        Then $\dim ker T^* = \rank T$. By definition, $\dim \ker T + \dim \ker T^* = \dim V$ and thus $\nul T + \ker T = \dim V$.
+    \end{proof}
+
     \section[d3]{10/7 - Linear Algebra}
+
+    \begin{definition}{Inner Product on Vector Space}
+        ~\\An \textbf{inner product} on a vector space $V$ is a bilinear map $\cdot:V \times V \to \R$ such that for $\vv, \vu, \vw \in V$ and $\alpha \in \R$.
+        \begin{enumerate}
+            \item $(\alpha \vu + \vv) \cdot \vw = \alpha \vu \cdot \vw + \vv \cdot \vw$
+            \item $\vu \cdot \vw = \vw \cdot \vu$
+            \item $\vu \cdot \vu > 0$ if $\vu \neq \vzero$. $\vzero \cdot \vzero = 0$. 
+        \end{enumerate}
+    \end{definition}
+
+    \begin{definition}{Absolute Value, Orthonormal Bases}
+        ~\\For $\vv \in V$, the \textbf(absolute value) of $\vv$ is $|\vv| = \sqrt{\vv \cdot \vv}$. 
+
+        An \textbf{orthonormal basis} of $V$ is a basis $B = \{\vv_1, \cdots, \vv_n\}$ such that 
+        \[
+            v_i \cdot v_j = \begin{cases}
+                1 & i = j\\
+                0 & otherwise
+            \end{cases}
+        \]
+    \end{definition}
+    
+    \begin{definition}{Orthogonal Complement}
+        ~\\If $W \subset V$ is a subspace then the \textbf{orthogonal complement} $W^{\perp}$ is defined as $$W^{\perp} = \{v \in V: v\cdot w = 0 \text{ for all } w \in W\}$$
+    \end{definition}
+
+    \begin{thm}{$W^{\perp}$ is a Subspace Disjoint to $W$}
+        \begin{enumerate}
+            \item $W^{\perp}$ is a subspace of $V$.
+            \item $W^{\perp} \cap W = \{0\}$.
+        \end{enumerate}
+    \end{thm}
+
+    \begin{enumerate}
+        \item \begin{proof}
+            Suppose $\vu, \vv \in W^{\perp}$ and $\alpha \in \R$. Let $\vw$ be an arbitrary element of $W$. Then $$(\alpha\vu + \vv)\cdot \vw = \alpha \vu \cdot \vw + \vv \cdot \vw = 0$$Thus $\alpha\vu + \vv \in W^{\perp}$ so $W^{\perp}$ is a subspace.
+        \end{proof}
+        \item \begin{proof}
+            Suppose $\vv \in W^{\perp} \cap W$. Then $\vv \cdot \vv = 0$, and thus $\vv = 0$, so $W^{\perp} \cap W = \{0\}$.
+        \end{proof}
+    \end{enumerate}
+
+    \begin{thm}{Inner Products and Orthonormal Bases Exist}
+        \begin{enumerate}
+            \item $V$ is an inner product.
+            \item Given a subspace $W \subset V$, there exists an orthonormal basis of $W$ which can be extended to an orthonormal basis of $V$.
+        \end{enumerate}
+    \end{thm}
+
+    \begin{enumerate}
+        \item \begin{proof}
+            Choose a basis $\{\vv_1, \cdots, \vv_n\}$ of $V$. For $\vw, \vu \in V$ where $$\vw = \sum_{i = 1}^n \alpha_i \vv_i, \vu = \sum_{i=1}^n \beta_i \vv_i$$define $$\vu \cdot \vw = \sum_{i = 1}^n \alpha_i\beta_i$$Fix $\vu, \vv, \vw \in V$ such that$$\vu = \sum_{i=1}^n \alpha_i \vv_i, \vv=\sum_{i=1}^n \beta_i \vv_i, \vw=\sum_{i=1}^n \gamma_i \vv_i$$and $\lambda \in \R$. Then $$(\lambda \vu + \vv) \cdot \vw = \sum_{i = 1}^n (\lambda \alpha_i + \beta_i)\gamma_i = \lambda_i \sum_{i = 1}^n \alpha_i \gamma_i + \sum_{i = 1}^n \beta_i \gamma_i = \lambda \vu \cdot \vw + \vv \cdot \vw$$
+
+            Since multiplication over $\R$ is commutative, $\vu \cdot \vv = \vv \cdot \vu$. $\vu \cdot \vu = \sum_{i = 1} \alpha_i^2$. Thus $\vu \cdot \vu > 0$ unless $\alpha_1 = \cdots = \alpha_n = 0$, in which case $\vu = \vzero$ and $\vu \cdot \vu = 0$. Thus $\cdot$ is an inner product.
+        \end{proof}
+        \item \begin{proof}
+            Pick $\vv_1 \in W - \{0\}$, define $e_1 = \frac{\vv_1}{|\vv_1|}$, so $|e_1| = 1$. Set $W_1 = \spn \{e_1\}$ as a subspace of $W$. If $W_1^{\perp} \neq \{0\}$, choose $\vv_2 \in W_1^{\perp} - \{0\}$. Set $e_2 = \frac{e_1}{|e_1|}$ and set $W_2 = \spn \{e_1, e_2\}$. Repeat this process until $W_k = W$. Since each vector in the basis is orthogonal to all the vectors before it, all vectors are orthogonal to all other vectors. All vectors are by definition length $1$. Thus $e_1, \dots, e_k$ is a orthonormal basis of $W$. By the same process it may be extended to a basis of $V$.
+        \end{proof}
+    \end{enumerate}
+
+    \begin{thm}{Dimension of Orthogonal Complement}
+        ~\\Let $W$ be a subspace of $V$. Then $\dim W + \dim W^{\perp} = \dim V$.
+    \end{thm}
+
+    \section[d4]{10/9 - Linear Algebra}
+    \begin{thm}[Specific Rank + Nullity as Corollary of General Rank + Nullity]
+        ~\\Let $T: V \to W$ be a linear map. Then
+        $$\dim V = \nul T + \rank T$$
+    \end{thm}
+
+    \begin{proof}
+        \begin{align}
+            \rank(T) &= \rank(T^*)\\
+            &= \vdim \im(T^{*}) \\
+            &= \vdim \ker(T)^{\perp} \\
+            &= \dim V - \dim \ker(T)\\
+            &= \dim V - \nul (T)
+        \end{align}
+
+        Line $4$ follows from $\dim W + \dim W^{\bot} = \dim V$, and the other from rank + nullity. Hence, we have $\rank (T) = \dim V - \nul (t)$, so $\rank (t) + \nul (t) = \dim V$.
+    \end{proof}
+
+    \begin{thm}[Index of operator corollary]
+        ~\\For linear map $T: V \to W$:$$\dim V - \dim  W = \nul (T) - \nul(T^*)$$
+        $\nul (T) - \nul(T^*)$ is known as the \textbf{index of the operator}.
+    \end{thm}
+
+    \begin{proof}
+        From rank + nullity, we have $\nul (T) + \rank (T) = \dim V$, $\nul (T^*) + \rank (T^*) = \dim W$, and $\rank (T) = \rank (T^*)$. Subtracting these gives 
+        $$\dim V - \dim W = \nul (T) + \rank (T) - \nul (T^*) - \rank (T^*) = \nul (T) - \nul (T^*)$$
+    \end{proof}
+
+    \begin{definition}{Self-adjoint}
+        A linear map $T:V \to W$ is \textbf{self-adjoint} if $T = T^{*}$.
+    \end{definition}
+
+    \begin{definition}{Eigenvalues, Eigenvectors, and Diagonalizable Maps}
+        Let $T:V \to V$ be a linear map. $\lambda \in \R$ is an \textbf{eigenvalue} if there exists an \textbf{eigenvector} $v \in V$ such that $Tv = \lambda v$.
+
+        $T$ is \textbf{diagonalizable} if there exists an orthonormal basis $\{\vv_1, \dots, \vv_n\}$ of $V$ and $\lambda_1, \dots, \lambda_n \in \R$ such that $$T(\vv_i) = \lambda_i \vv_i$$
+    \end{definition}
+
+    \begin{thm}
+        Every self-adjoint map is diagonalizable.
+    \end{thm}
+    \begin{proof}
+        Let $P(n)$ be the proposition that for any vector space $V$ such that $\dim V \le n$, for any self-adjoint linear map $T:V \to V$, $T$ is diagonalizable.
+
+        For the base case, since $\dim V = 1$, pick $\vv \in V$ and let $\bar \vv = \frac{\vv}{|\vv|}$. Then $V = \spn \bar \vv$, so $T\bar \vv = \lambda \bar \vv$ for some $\lambda \in \R$. Since $\{\bar \vv\}$ is an orthonormal basis of $V$ and it has eigenvalue $\lambda$, $T$ is diagonalizable.
+
+        Suppose for some $k \in \N$, $P(k)$ holds. Fix self-adjoint $T:V \to V$, where $\dim V = n+1$. Since $V$ is isomorphic to $\R^{n+1}$, we will let $V = \R^{n+1}$. Set $f:S^{n+1} \to \R$ such that $f(v) = T(v) \cdot v$. This $f$ is continuous over a compact space, so it has a maximum of $\lambda$ at some $\bar \vv \in S^{n+1}$ and thus $f(\bar \vv) = \lambda$. 
+        
+        Choose $\vw \perp \bar \vv$. Set $$v(t) = \frac{\bar \vv + t\vw}{|\bar \vv + t\vw|}$$for $t$ small. Then $v(0) = \bar \vv$ and $v(t) \in S^{n+1}$. We want to show that $f(v(t))$ is maximized at $t = 0$, so $\frac{d}{dt} f(v(t))|_{t = 0} = 0$. Computing $\frac{d}{dt} f(v(t))$ we see that
+
+        $$\tfrac{d}{dt}f(v(t)) = \tfrac{d}{dt}\frac{T(\bar \vv + t \vw) \cdot (\bar \vv + t \vw)}{|\bar \vv + t \vw|^2}$$
+
+        Using the distributivity of the dot product and that $\vv \cdot \vw = 0$, we see 
+        $$|(\bar \vv + t \vw)|^2 = (\bar \vv + t \vw) \cdot (\bar \vv + t \vw) = |\bar \vv|^2 + 2t\bar \vv \vw + t^2 |\vw|^2 = |\bar \vv|^2 + t^2 |\vw|^2$$
+        Similarly$$T(\bar \vv + t \vw) \cdot (\bar \vv + t \vw) = T(\bar \vv)\bar \vv + 2tT(\bar \vv)\cdot w + t^2T(\vw)\vw$$Finally, since $\bar \vv \perp \vw$, $\bar \vv \cdot \vw = 0$, so we have
+        
+        $$ \tfrac{d}{dt}\frac{T(\bar \vv + t \vw) \cdot (\bar \vv + t \vw)}{|\bar \vv + t \vw|^2} $$
+        $$= \frac{(|\bar \vv|^2 + t^2|\vw|^2)(2T(\bar \vv)\cdot \vw)}{|\bar \vv + t \vw|^4}$$
+        Since we know $f(\vv)$ is maximized when $\vv = \bar \vv$, we know $\frac{d}{dt}f(v(0)) = 0$. Thus at $t = 0$ we have
+        \begin{align*}
+            &\frac{|\bar \vv|^2(2T(\bar \vv)\cdot \vw)}{|\bar\vv|^4}\\
+            &=\frac{2T(\bar \vv) \cdot \vw}{|\bar\vv|^2}
+        \end{align*}
+        
+        And therefore, $\frac{2T(\bar \vv) \cdot \vw}{|\bar\vv|^2}$, which in turn implies that $T(\bar \vv) \cdot \vw = 0$. Let $\{\bar \vv, \vw_2, \dots, \vw_k\}$ be an orthonormal basis of $V$. Then $T(\bar \vv) = \lambda \bar \vv + \sum_{i = 2}^k \alpha_i \vw_i$. Since $T(\bar \vv)$ is normal to all $\vw_i$ in the basis, $\alpha_i = 0$ for all $i = 2 ... k$. Then since $T(\bar \vv) \neq \vzero$, $T(\bar \vv) = \lambda \bar \vv$, so $\bar \vv$ is an eigenvector of $T$ with eigenvalue $\lambda$. 
+
+        Now that we have an eigenvector $\bar \vv$ of $T$, set $W = \spn\{\bar \vv\}^{\perp}$. For all $\vw \in W$,  $T(\vw) \cdot \bar \vv = T(\bar \vv) \cdot \vw = \vw \cdot \lambda \vv = 0$, so $T(\vw) \in W$, and thus it makes sense to restrict $T$ to $W$ as $T|_W:W \to W$. $T|_W$ remains self adjoint, and thus by $P(k)$ is diagonalizable over some orthonormal basis $\{\vv_2, \dots, \vv_k\}$, so $T$ is diagonalizable over $\{\bar \vv, \vv_2, \dots, \vv_k\}$. Thus $P(k)$ implies $P(k+1)$, so the proposition holds for all finite vector spaces.
+    \end{proof}
+
+    
 \end{document}
